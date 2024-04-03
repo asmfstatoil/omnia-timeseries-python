@@ -2,18 +2,22 @@ from omnia_timeseries.api import TimeseriesAPI, TimeseriesEnvironment
 import pandas as pd
 
 api = TimeseriesAPI(environment=TimeseriesEnvironment.Prod())
-ts_ifm = api.get_timeseries(facility="SNA", source="IFM")
+
+
+# https://api.gateway.equinor.com/plant/timeseries/v1.7/facility/counters
+
+ts_ims = api.get_timeseries(facility="SNA", source="IMS")
+
+ts_ifm = api.get_timeseries(facility="GRA", source="IFM")
 try:
     api = TimeseriesAPI()
-    ts_ifm_2 = api.get_timeseries(facility="SNA", source="IFM")
+    ts_ifm_2 = api.get_timeseries(facility="GRA", source="IFM")
 
-    # ts_ims = api.get_timeseries(facility="SNA", source="IMS")
 
     tags = ts_ifm["data"]["items"]
     # tags = ts_ifm["data"]["items"]
 
     df = pd.DataFrame(tags)
-
     print(df.head)
     for k in range(0, len(df.index)-1):
         try:

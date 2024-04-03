@@ -103,12 +103,12 @@ class HttpClient:
                 scopes[0]
             )  # handles caching and refreshing internally
             return BearerAuth(access_token.token)
-
-        tenantID = "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"  # Equinor tenant
+        
+        from omnia_timeseries.api import TimeseriesEnvironment
         clientID = "98fe146b-2687-4db9-9c84-45f4cd9063af"  # IOC-monitoring-sdk
         scopes = [f"{self._resource_id}/user_impersonation"]
         return BearerAuth.get_auth(
-            tenantID=tenantID,
+            tenantID=TimeseriesEnvironment.tenant_id,
             clientID=clientID,
             scopes=scopes,
             username=f"{get_login_name()}@equinor.com",

@@ -19,6 +19,8 @@ logger = logging.getLogger(__name__)
 
 
 class TimeseriesEnvironment:
+    tenant_id = "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
+    
     def __init__(self, resource_id: str, base_url: str):
         self._resource_id = resource_id
         self._base_url = base_url
