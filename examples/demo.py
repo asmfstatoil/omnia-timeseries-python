@@ -1,7 +1,8 @@
-from azure.identity import     DefaultAzureCredential
+from azure.identity import DefaultAzureCredential
 from omnia_timeseries import TimeseriesAPI, TimeseriesEnvironment
 import pandas as pd
 from typing import Union
+
 # Python SDK documentation
 # https://github.com/equinor/omnia-timeseries-python
 
@@ -13,24 +14,24 @@ credential_1 = DefaultAzureCredential()
 ims_tag = "GFC.13-AE___938_.Sand_Raw"
 ims_collective = "GFC"
 
+
 def get_id_from_tag(
     api: TimeseriesAPI, ims_tag: str, ims_collective: str
 ) -> Union[str, None]:
     """Simple function to determine timeseries ID from a given ims- tag and collective"""
     try:
         tag_search = api.search_timeseries(name=ims_tag, assetId=ims_collective)
-        if not tag_search['data']['items']:
-            raise Exception(f'Unable to find or access {ims_tag}')
+        if not tag_search["data"]["items"]:
+            raise Exception(f"Unable to find or access {ims_tag}")
         return tag_search["data"]["items"][0]["id"]
     except Exception as e:
-        print(f'Error: {e}')
+        print(f"Error: {e}")
         return None
 
+
 for cred in credential_1.credentials:
-    api = TimeseriesAPI(
-        azure_credential=cred, environment=TimeseriesEnvironment.Test()
-    )
-    
+    api = TimeseriesAPI(azure_credential=cred, environment=TimeseriesEnvironment.Test())
+
     tag_ts_id = get_id_from_tag(api, ims_tag, ims_collective)
 
     if tag_ts_id:

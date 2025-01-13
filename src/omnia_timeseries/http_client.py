@@ -91,7 +91,7 @@ class HttpClient:
         )
 
     def get_auth(self) -> BearerAuth:
-        """Get bearer token for authenticating. 
+        """Get bearer token for authenticating.
         Uses azure credential if provided. Else attempts to get access token for on-behalf-of user using msal
 
         Returns:

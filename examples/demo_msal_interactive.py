@@ -15,14 +15,17 @@ try:
     df = pd.DataFrame(tags)
 
     print(df.head)
-    for k in range(0, len(df.index)-1):
+    for k in range(0, len(df.index) - 1):
         try:
             point_id = df.loc[k, "id"]
             ts2 = api.get_timeseries_by_id(id=point_id)
             # print(ts2)
 
             actual_points = api.get_datapoints(
-                id=point_id, startTime="2021-11-01T09:45:10+00:00", endTime="2021-11-15T09:45:10+00:00")
+                id=point_id,
+                startTime="2021-11-01T09:45:10+00:00",
+                endTime="2021-11-15T09:45:10+00:00",
+            )
             print(actual_points)
 
             last_point = api.get_latest_datapoint(id=point_id)
