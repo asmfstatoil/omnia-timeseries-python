@@ -91,8 +91,9 @@ class TimeseriesAPI:
     :param TimeseriesEnvironment environment: API deployment environment
     """
 
-    def __init__(self, azure_credential: MsalCredential = None, environment: TimeseriesEnvironment = TimeseriesEnvironment.Prod):
-        self._http_client = HttpClient(resource_id=environment.resource_id, azure_credential=azure_credential)
+    def __init__(self, azure_credential: MsalCredential, environment: TimeseriesEnvironment):
+        self._http_client = HttpClient(
+            azure_credential=azure_credential, resource_id=environment.resource_id)
         self._base_url = environment.base_url.rstrip('/')
 
     def write_data(self, id: str, data: DatapointsPostRequestModel, write_async: Optional[bool] = None) -> MessageModel:

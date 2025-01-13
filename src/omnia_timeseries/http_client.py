@@ -1,4 +1,4 @@
-from typing import Literal, Optional, Union, Dict, Any
+from typing import Literal, Optional, TypedDict, Union, Dict, Any
 from azure.identity._internal.msal_credentials import MsalCredential
 import requests
 import logging
@@ -9,7 +9,7 @@ from importlib import metadata
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 import platform
 
-from msal_bearer.BearerAuth import BearerAuth, get_login_name
+from msal_bearer.BearerAuth import BearerAuth, get_user_name
 
 ContentType = Literal[
     "application/json", "application/protobuf", "application/x-google-protobuf"
@@ -32,14 +32,13 @@ RequestsInstrumentor().instrument()
 def _request(
     request_type: RequestType,
     url: str,
-    auth,
     headers: Dict[str, Any],
-    payload: Optional[Union[dict, list]] = None,
+    payload: Optional[Union[TypedDict, dict, list]] = None,
     params: Optional[Dict[str, Any]] = None,
 ) -> Union[Dict[str, Any], bytes]:
 
     response = requests.request(
-        request_type, url, auth=auth, headers=headers, json=payload, params=params
+        request_type, url, headers=headers, json=payload, params=params
     )
     if not response.ok:
         raise TimeseriesRequestFailedException(response)
@@ -59,24 +58,25 @@ class HttpClient:
         resource_id,
         azure_credential: MsalCredential = None,
     ):
+        self._azure_credential = azure_credential
         if resource_id is None or not isinstance(resource_id, str):
             raise ValueError(
                 "Input resource id must be a valid Azure application (client) id"
             )
-
         self._resource_id = resource_id
-        self._azure_credential = azure_credential
 
     def request(
         self,
         request_type: RequestType,
         url: str,
         accept: ContentType = "application/json",
-        payload: Optional[Union[dict, list]] = None,
+        payload: Optional[Union[TypedDict, dict, list]] = None,
         params: Optional[Dict[str, Any]] = None,
     ) -> Any:
 
+        access_token = self.get_token()
         headers = {
+            "Authorization": f"Bearer {access_token.token}",
             "Content-Type": "application/json",
             "Accept": accept,
             "User-Agent": f"Omnia Timeseries SDK/{version} {system_version_string}",
@@ -87,20 +87,18 @@ class HttpClient:
             headers=headers,
             payload=payload,
             params=params,
-            auth=self.get_auth(),
         )
 
-    def get_auth(self) -> BearerAuth:
+    def get_token(self) -> BearerAuth:
         """Get bearer token for authenticating.
         Uses azure credential if provided. Else attempts to get access token for on-behalf-of user using msal
 
         Returns:
             BearerAuth: Bearer token to use for authenticating against api.
         """
-        scopes = [f"{self._resource_id}/.default"]
         if self._azure_credential is not None:
             access_token = self._azure_credential.get_token(
-                scopes[0]
+                f"{self._resource_id}/.default"
             )  # handles caching and refreshing internally
             return BearerAuth(access_token.token)
 
@@ -111,5 +109,5 @@ class HttpClient:
             tenantID=tenantID,
             clientID=clientID,
             scopes=scopes,
-            username=f"{get_login_name()}@equinor.com",
+            username=f"{get_user_name()}@equinor.com",
         )
