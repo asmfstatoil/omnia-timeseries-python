@@ -1,7 +1,7 @@
 from omnia_timeseries.api import TimeseriesAPI, TimeseriesEnvironment
 import pandas as pd
 
-api = TimeseriesAPI(environment=TimeseriesEnvironment.Prod())
+api = TimeseriesAPI(environment=TimeseriesEnvironment.Prod(), azure_credential=None)
 ts_ifm = api.get_timeseries(facility="SNA", source="IFM")
 try:
     api = TimeseriesAPI()
