@@ -49,22 +49,12 @@ credentials = ClientSecretCredential(
 
 Read [Authenticating by user impersonation without any shared secret (For people with Equinor accounts)](https://github.com/equinor/OmniaPlant/wiki/Authentication-&-Authorization#authenticating-by-user-impersonation-without-any-shared-secret-for-people-with-equinor-accounts) and ensure prerequisite steps have been done.
 
-For testing user impersonation you can use our public client ids:
-
-- 675bd975-260f-498e-82cd-65f67b34fe7d (test)
-- 67da184b-6bde-43fd-a155-30ed4ff162d2 (production)
-
 ```python
-from azure.identity import DeviceCodeCredential
-import os
-credentials = DeviceCodeCredential(
-    tenant_id=os.environ['AZURE_TENANT_ID'],
-    client_id=os.environ['AZURE_CLIENT_ID']
-)
+from azure.identity import InteractiveBrowserCredential
+api = TimeseriesAPI(azure_credential=InteractiveBrowserCredential(), environment=TimeseriesEnvironment.Prod())
 ```
 
-During authentication, this will display a URL to visit, and a code to enter. After completing
-the flow, execution will proceed.
+During authentication, this will a Microsoft Azure log in site. After completing the log in, execution will proceed.
 
 #### With default credentials (azure cli, MSI and so on)
 
