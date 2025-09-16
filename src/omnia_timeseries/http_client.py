@@ -103,7 +103,6 @@ class HttpClient:
             return BearerAuth(access_token.token)
 
         tenantID = "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"  # Equinor tenant
-        # 67da184b-6bde-43fd-a155-30ed4ff162d2
         # clientID = "67da184b-6bde-43fd-a155-30ed4ff162d2" # not for msal public flow
         clientID = "98fe146b-2687-4db9-9c84-45f4cd9063af"  # IOC-monitoring-sdk
         scopes = [f"{self._resource_id}/user_impersonation"]
